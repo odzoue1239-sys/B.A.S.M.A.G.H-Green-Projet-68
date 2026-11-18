@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B.A.S.M.A.G.H Green – Carte, planning et suivi</title>
+<!-- LIEN 1 : le fichier CSS (même dossier) donne le style à tous les id/class ci-dessous -->
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+<div class="brand"><span class="logo">B</span><div><strong>B.A.S.M.A.G.H Green</strong><small>Du déchet à la ressource, à Dakar</small></div></div>
+<nav id="nav">
+<button data-tab="carte" class="on">Ma carte</button>
+<button data-tab="planning">Planning 2026</button>
+<button data-tab="personnes">Personnes</button>
+<button data-tab="projet">Le projet</button>
+</nav>
+<div class="who"><span id="whoami"></span> <button id="logout" class="btn alt" type="button" hidden>Déconnexion</button></div>
+</header>
+
+<main>
+<!-- CONNEXION -->
+<section id="login" class="panel">
+<h1>Connexion</h1>
+<p class="lead">Entre ton matricule : le site reconnaît ton identité et ton rôle (ADM, RESP, COLL ou PART).</p>
+<form id="formLogin" class="row">
+<input id="loginMat" placeholder="Ex. PART-001" autocomplete="off" required>
+<button class="btn">Entrer</button>
+</form>
+<p id="loginMsg" class="msg"></p>
+</section>
+
+<!-- ONGLET 1 : CARTE -->
+<section id="tab-carte" class="tab on">
+<h1>Retrouver une carte</h1>
+<p class="lead">Entre le matricule inscrit sur la carte (il commence par PART).</p>
+<form id="formSearch" class="row">
+<input id="matricule" placeholder="PART-001" autocomplete="off" required>
+<button class="btn">Chercher</button>
+</form>
+<p id="searchMsg" class="msg"></p>
+<div id="cardView" hidden>
+<div class="card">
+<div class="cardHead"><div><h2 id="cNom"></h2><p id="cInfo"></p></div><span id="cMat" class="mat"></span></div>
+<div id="stamps" class="stamps"></div>
+<dl class="stats">
+<div><dt>Tampons</dt><dd id="cTampons"></dd></div>
+<div><dt>Cartes pleines</dt><dd id="cCartes"></dd></div>
+<div><dt>Plastique apporté</dt><dd id="cKg"></dd></div>
+<div><dt>Total payé</dt><dd id="cPaye"></dd></div>
+</dl>
+</div>
+<form id="formApport" class="panel">
+<h3>Enregistrer un apport</h3>
+<div class="row">
+<label>Poids (kg)<input id="kg" type="number" min="0.5" step="0.5" value="2" required></label>
+<label>Date<input id="dateApport" type="date" required></label>
+<button class="btn">Valider et payer</button>
+</div>
+<p id="apportMsg" class="msg"></p>
+</form>
+<h3>Historique</h3>
+<ul id="histo" class="histo"></ul>
+</div>
+</section>
+
+<!-- ONGLET 2 : PLANNING -->
+<section id="tab-planning" class="tab">
+<h1>Planning de ramassage 2026</h1>
+<p class="lead">Un ramassage tous les 2 jours. Si la collecte a lieu un jour, la suivante est automatiquement prévue 2 jours après.</p>
+<div class="panel row">
+<label>Un ramassage a eu lieu le<input id="anchor" type="date" min="2026-01-01" max="2026-12-31"></label>
+<button id="btnToday" class="btn alt" type="button">Collecte faite aujourd’hui</button>
+</div>
+<div class="calHead">
+<button id="prev" class="btn alt" type="button" aria-label="Mois précédent">‹</button>
+<h2 id="monthTitle"></h2>
+<button id="next" class="btn alt" type="button" aria-label="Mois suivant">›</button>
+</div>
+<div id="calendar" class="cal"></div>
+<p class="legend"><span class="dot pick"></span> jour de ramassage <span class="dot now"></span> aujourd’hui</p>
+<h3>Prochaines collectes</h3>
+<ul id="nextList" class="histo"></ul>
+</section>
+
+<!-- ONGLET 3 : PERSONNES -->
+<section id="tab-personnes" class="tab">
+<h1>Participants et collecteurs</h1>
+<div class="two">
+<form id="formPerson" class="panel">
+<h3>Nouveau participant</h3>
+<label>Nom complet<input id="pNom" required></label>
+<label>Quartier<input id="pQuartier" required></label>
+<label>Téléphone<input id="pTel" type="tel"></label>
+<button class="btn">Créer la carte</button>
+<p id="pMsg" class="msg"></p>
+</form>
+<form id="formCollector" class="panel">
+<h3>Nouveau collecteur</h3>
+<label>Nom complet<input id="kNom" required></label>
+<label>Zone couverte<input id="kZone" required></label>
+<label>Téléphone<input id="kTel" type="tel"></label>
+<button class="btn">Ajouter</button>
+</form>
+</div>
+<h3>Participants</h3>
+<div class="scroll"><table id="tPeople"></table></div>
+<h3>Collecteurs (ils tournent dans cet ordre)</h3>
+<div class="scroll"><table id="tCollectors"></table></div>
+<h3>Responsables</h3>
+<div class="scroll"><table id="tResp"></table></div>
+<h3>Classement des participants (poids total apporté)</h3>
+<div class="scroll"><table id="tRank"></table></div>
+</section>
+
+<!-- ONGLET 4 : PROJET -->
+<section id="tab-projet" class="tab">
+<h1>Comment ça marche</h1>
+<h3>Vidéo explicative (2D, sans voix)</h3>
+<div class="vid">
+<div class="stg">
+<svg viewBox="0 0 800 450">
+<rect width="800" height="450" fill="#CFEBC4"/>
+<rect y="335" width="800" height="115" fill="#C9B38A"/>
+<g id="vw">
+<rect width="800" height="335" fill="#E9F5E1"/>
+<text x="400" y="66" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4D3A">Point de collecte – B.A.S.M.A.G.H Green</text>
+<g transform="translate(190 300)">
+<g id="vB" class="mv">
+<g class="bob">
+<circle cy="-70" r="16" fill="#F1C27D"/>
+<rect x="-26" y="-48" width="9" height="30" rx="4" fill="#3A6EA5"/>
+<rect x="17" y="-48" width="9" height="30" rx="4" fill="#3A6EA5"/>
+<rect x="-18" y="-54" width="36" height="58" rx="12" fill="#3A6EA5" />
+<rect x="-14" y="4" width="10" height="28" fill="#345"/>
+<rect x="4" y="4" width="10" height="28" fill="#345"/>
+<path d="M-17 -76q17-26 34 0z" fill="#333"/>
+<circle cx="-5" cy="-70" r="2"/>
+<circle cx="6" cy="-70" r="2"/>
+<path d="M-5 -63q5 4 10 0" stroke="#000" fill="none"/>
+<text id="vBn" y="-104" text-anchor="middle" font-size="12" font-weight="700" fill="#1B2B22">Agent informatique</text>
+</g>
+</g>
+</g>
+<rect x="60" y="292" width="180" height="70" fill="#A9825A"/>
+<rect x="85" y="226" width="80" height="58" rx="5" fill="#1B2B22"/>
+<rect x="118" y="284" width="14" height="8" fill="#555"/>
+<text id="vmon" x="125" y="260" text-anchor="middle" font-size="12" font-weight="700" fill="#7CFF9B">
+</text>
+<rect x="345" y="318" width="200" height="46" rx="4" fill="#8B6B43"/>
+<rect x="360" y="308" width="90" height="10" rx="3" fill="#999"/>
+<rect x="495" y="303" width="8" height="15" fill="#555"/>
+<rect x="455" y="255" width="84" height="48" rx="6" fill="#222"/>
+<text id="vbw" x="497" y="289" text-anchor="middle" font-size="26" font-weight="700" fill="#7CFF9B">
+</text>
+<g id="vbag" class="mv">
+<path d="M-18 0L-22 -40Q0 -52 22 -40L18 0Z" fill="#5BA8D9" stroke="#1F4D3A" stroke-width="2"/>
+<path d="M-8 -44q8-14 16 0" stroke="#1F4D3A" stroke-width="3" fill="none"/>
+<text y="-14" text-anchor="middle" font-size="14" fill="#fff">♻</text>
+</g>
+<g id="vA" class="mv">
+<g class="bob">
+<circle cy="-70" r="16" fill="#F1C27D"/>
+<rect x="-26" y="-48" width="9" height="30" rx="4" fill="#4C9A5B"/>
+<rect x="17" y="-48" width="9" height="30" rx="4" fill="#4C9A5B"/>
+<rect x="-18" y="-54" width="36" height="58" rx="12" fill="#4C9A5B" />
+<rect x="-14" y="4" width="10" height="28" fill="#345"/>
+<rect x="4" y="4" width="10" height="28" fill="#345"/>
+<path d="M-17 -76q17-26 34 0z" fill="#F2B632"/>
+<circle cx="-5" cy="-70" r="2"/>
+<circle cx="6" cy="-70" r="2"/>
+<path d="M-5 -63q5 4 10 0" stroke="#000" fill="none"/>
+<text id="vAn" y="-104" text-anchor="middle" font-size="12" font-weight="700" fill="#1B2B22">Agent de terrain</text>
+</g>
+</g>
+<g id="vP" class="mv">
+<g class="bob">
+<circle cy="-70" r="16" fill="#F1C27D"/>
+<rect x="-26" y="-48" width="9" height="30" rx="4" fill="#E8590C"/>
+<rect x="17" y="-48" width="9" height="30" rx="4" fill="#E8590C"/>
+<rect x="-18" y="-54" width="36" height="58" rx="12" fill="#E8590C" id="vpb"/>
+<rect x="-14" y="4" width="10" height="28" fill="#345"/>
+<rect x="4" y="4" width="10" height="28" fill="#345"/>
+<path d="M-17 -76q17-26 34 0z" fill="#555"/>
+<circle cx="-5" cy="-70" r="2"/>
+<circle cx="6" cy="-70" r="2"/>
+<path d="M-5 -63q5 4 10 0" stroke="#000" fill="none"/>
+<text id="vPn" y="-104" text-anchor="middle" font-size="12" font-weight="700" fill="#1B2B22">
+</text>
+</g>
+</g>
+<g id="vpc">
+<rect x="520" y="150" width="120" height="75" rx="8" fill="#fff" stroke="#1F4D3A" stroke-width="3"/>
+<text x="580" y="170" text-anchor="middle" font-size="11" fill="#1F4D3A">Carte physique</text>
+<g id="vst">
+<circle cx="580" cy="198" r="18" fill="#FFE3D0" stroke="#E8590C" stroke-width="3"/>
+<text x="580" y="204" text-anchor="middle" font-size="16" font-weight="700" fill="#E8590C">B</text>
+</g>
+</g>
+</g>
+<rect x="10" y="8" width="380" height="28" rx="8" fill="#1F4D3A" opacity=".92"/>
+<text id="vt" x="20" y="28" font-size="15" fill="#fff">
+</text>
+</svg>
+<div id="vov" class="ov">
+</div>
+<div id="vwp" class="wipe">
+</div>
+<div id="vfd" class="fade">
+</div>
+</div>
+<div id="vcap">
+</div>
+<div class="vbar"><button id="vback" class="btn alt" type="button" title="Reculer de 10 secondes">⏪ 10 s</button> <button id="vplay" class="btn" type="button">▶ Lecture</button> <button id="vspd" class="btn alt" type="button">x1</button> <button id="vvoice" class="btn alt" type="button">🔊 Voix</button> <input id="vsl" type="range" min="0" max="168" step="0.1" value="0" aria-label="Progression"> <span id="vtm">0:00 / 2:48</span></div>
+</div>
+<p class="lead">Tu apportes ton plastique, il est pesé, tu es payé tout de suite en espèces et ta carte avance.</p>
+<div class="panel">
+<h3>Règles de la carte</h3>
+<ul class="rules">
+<li>2 kg minimum valident un tampon ; on peut apporter plus, tout est payé au kilo.</li>
+<li>Paiement en espèces dès l’apport, à partir de 60 FCFA le kilo.</li>
+<li>1 tampon maximum tous les 2 jours. Si tu reviens dans la journée, tu es payé sans tampon.</li>
+<li>12 tampons = carte pleine = 250 FCFA de bonus, à chaque carte pleine.</li>
+</ul>
+</div>
+<h3>Les chiffres du modèle (estimations mensuelles, FCFA)</h3>
+<div class="scroll">
+<table>
+<tr><th>Activité</th><th>Hypothèse</th><th>Recettes</th><th>Dépenses</th><th>Solde</th></tr>
+<tr><td>1. Revente des déchets</td><td>1 500 kg à 200 FCFA/kg</td><td>300 000</td><td>165 000</td><td>135 000</td></tr>
+<tr><td>2. Abonnements ménages</td><td>100 × 1 000</td><td>100 000</td><td>45 000</td><td>55 000</td></tr>
+<tr><td>3. Contrats entreprises</td><td>10 × 20 000</td><td>200 000</td><td>110 000</td><td>90 000</td></tr>
+<tr><td>Bonus cartes + frais communs</td><td>31 250 + 65 000</td><td>—</td><td>96 250</td><td>−96 250</td></tr>
+<tr class="total"><td>Total lancement</td><td></td><td>600 000</td><td>416 250</td><td>183 750</td></tr>
+</table>
+</div>
+<h3>Activités prévues plus tard</h3>
+<div class="two">
+<div class="panel"><h4>4. Transformation</h4><p>Pavés, bacs, bancs, piquets en plastique recyclé. Environ 15 000 FCFA de solde par lot, avant amortissement des machines.</p></div>
+<div class="panel"><h4>5. Prestations industrielles</h4><p>Diagnostic, audit de tri, plan de gestion des déchets. Environ 60 000 FCFA de solde par mission.</p></div>
+</div>
+<p class="small">Tous les montants sont des hypothèses à valider sur le terrain, avant impôts et rémunérations.</p>
+</section>
+</main>
+
+<footer>Groupe n° 68 – Awa Sarr, Mariétou Lassana, Binetou Cheikh Ly, KOUYI ODZOUE Gilles Emmanuel, Adja Sarata GUEYE, Aicha Ngoné Sarr, Dieynaba Hanne</footer>
+
+<!-- LIEN 2 : le fichier JavaScript (même dossier) lit ces id/class et affiche les données -->
+<script src="script.js"></script>
+</body>
+</html>
